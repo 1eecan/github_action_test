@@ -6,20 +6,22 @@ on:
       - assigned
 
 jobs:
-  update_kanban_status:
+  update-kanban-status:
     runs-on: ubuntu-latest
-    steps:
-      - name: Check if issue is assigned
-        run: echo "Checking if issue is assigned..."
 
-      - name: Update Kanban Status
-        env:
-          GH_PAT: ${{ secrets.ACTION_TOKEN }}
-        run: |
-          ISSUE_NUMBER=$(jq -r .issue.number "$GITHUB_EVENT_PATH")
-          STATUS_UPDATE="{\"note\":\"Issue assigned to ${{ github.event.issue.assignee.login }}\"}"
-          curl -X POST \
-              -H "Authorization: token $ACTION_TOKEN" \
-              -H "Accept: application/vnd.github.inertia-preview+json" \
-              -d "$STATUS_UPDATE" \
-              "https://api.github.com/projects/columns/Todo/cards/$ISSUE_NUMBER/notes"
+    steps:
+    - name: Check if issue is assigned
+      id: check-assignee
+      run: echo "::set-output name=assignee::${{ github.event.issue.assignee }}"
+
+    - name: Update Kanban Status
+      if: steps.check-assignee.outputs.assignee != null
+      run: |
+        ISSUE_NUMBER="${{ github.event.issue.number }}"
+        PROJECT_COLUMN_ID="Todo"
+
+        API_URL="https://api.github.com/projects/columns/${PROJECT_COLUMN_ID}/moves"
+        HEADERS="Authorization: Bearer ${{ secrets.ACTION_TOKEN }}"
+        DATA="{\"position\":\"top\",\"content_id\":$ISSUE_NUMBER,\"content_type\":\"Issue\"}"
+
+        curl -X POST -H "$HEADERS" -d "$DATA" "$API_URL"
