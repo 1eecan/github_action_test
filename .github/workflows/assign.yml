@@ -14,13 +14,35 @@ jobs:
       id: check-assignee
       run: echo "::set-output name=assignee::${{ github.event.issue.assignee }}"
 
+    - name: Get Project Name
+      id: get-project-name
+      run: |
+        REPO_OWNER="${{ github.repository_owner }}"
+        REPO_NAME="${{ github.repository }}"
+        PROJECT_NAME=$(curl -s -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/projects" | jq -r '.[0].name')
+        echo "::set-output name=project_name::$PROJECT_NAME"
+
+    - name: Get Kanban Column ID
+      id: get-column-id
+      run: |
+        PROJECT_NAME="${{ steps.get-project-name.outputs.project_name }}"
+        API_URL="https://api.github.com/repos/${{ github.repository }}/projects"
+        HEADERS="Authorization: Bearer ${{ secrets.ACTION_TOKEN }}"
+        PROJECTS_JSON=$(curl -s -H "$HEADERS" "$API_URL")
+        PROJECT_ID=$(echo "$PROJECTS_JSON" | jq -r --arg PROJECT_NAME "$PROJECT_NAME" '.[] | select(.name == $PROJECT_NAME).id')
+
+        API_URL="https://api.github.com/projects/${PROJECT_ID}/columns"
+        COLUMNS_JSON=$(curl -s -H "$HEADERS" "$API_URL")
+        COLUMN_ID=$(echo "$COLUMNS_JSON" | jq -r '.[] | select(.name == "Your_Column_Name").id')
+        echo "::set-output name=column_id::$COLUMN_ID"
+
     - name: Update Kanban Status
       if: steps.check-assignee.outputs.assignee != null
       run: |
         ISSUE_NUMBER="${{ github.event.issue.number }}"
-        PROJECT_COLUMN_ID="f75ad846"
-
-        API_URL="https://api.github.com/projects/columns/${PROJECT_COLUMN_ID}/moves"
+        COLUMN_ID="${{ steps.get-column-id.outputs.column_id }}"
+        
+        API_URL="https://api.github.com/projects/columns/${COLUMN_ID}/moves"
         HEADERS="Authorization: Bearer ${{ secrets.ACTION_TOKEN }}"
         DATA="{\"position\":\"top\",\"content_id\":$ISSUE_NUMBER,\"content_type\":\"Issue\"}"
 
