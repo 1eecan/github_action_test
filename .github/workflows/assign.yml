@@ -18,7 +18,7 @@ jobs:
       if: steps.check-assignee.outputs.assignee != null
       run: |
         ISSUE_NUMBER="${{ github.event.issue.number }}"
-        PROJECT_COLUMN_ID="Todo"
+        PROJECT_COLUMN_ID="f75ad846"
 
         API_URL="https://api.github.com/projects/columns/${PROJECT_COLUMN_ID}/moves"
         HEADERS="Authorization: Bearer ${{ secrets.ACTION_TOKEN }}"
