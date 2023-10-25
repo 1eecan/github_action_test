@@ -19,7 +19,7 @@ jobs:
       run: |
         REPO_OWNER="${{ github.repository_owner }}"
         REPO_NAME="${{ github.repository }}"
-        PROJECT_NAME=$(curl -s -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/projects" | jq -r '.[0].name')
+        PROJECT_NAME=$(curl -s -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" "https://api.github.com/repos/${REPO_NAME}/projects" | jq -r '.[0].name')
         echo "::set-output name=project_name::$PROJECT_NAME"
 
     - name: Get Kanban Column ID
