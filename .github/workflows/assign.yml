@@ -12,7 +12,7 @@ jobs:
         id: get-project-and-column-id
         run: |
           github_token="${{ secrets.ACTION_TOKEN }}"
-          project_name="github_action_test"
+          project_name="@1eecan's untitled project"
           column_name="Todo"
 
           # GitHub API를 사용하여 리포지토리의 프로젝트 목록 가져오기
