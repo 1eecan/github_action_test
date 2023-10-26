@@ -29,6 +29,7 @@ jobs:
         with:
           message: |
             ${{ steps.pick_random_reviwer.outputs.comment }}
+            ${{ steps.[step-id].outputs.[output-id] }}
           repo-token: ${{ secrets.ACTION_TOKEN }}
           repo-token-user-login: 'github-actions[bot]'
       
