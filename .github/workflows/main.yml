@@ -1,0 +1,21 @@
+name: Sync Fork
+
+on:
+  on:
+  push:
+    branches: [ dev ]
+  workflow_dispatch: # on button click
+
+jobs:
+  sync:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: tgymnich/fork-sync@v1.8
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
+          owner: imb96
+          repo: https://github.com/imb96/github_action_test.git
+          base: dev
+          head: dev
