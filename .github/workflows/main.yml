@@ -16,5 +16,5 @@ jobs:
           token: ${{ secrets.ACTION_TOKEN }}
           owner: 1eecan
           repo: https://github.com/imb96/github_action_test.git
-          base: dev
-          head: dev
+          base: main
+          head: main
