@@ -27,3 +27,6 @@ jobs:
           git checkout dev
           git merge origin/dev
           git push fork dev
+        env:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+        
