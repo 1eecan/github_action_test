@@ -1,0 +1,27 @@
+name: Sync Fork
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config --global user.email "busyx2modernsociety@gmail.com"
+          git config --global user.name "1eecan"
+
+      - name: Sync with fork
+        run: |
+          git remote add fork https://github.com/1eecan/fork-repo.git
+          git fetch fork
+          git checkout dev
+          git merge fork/dev
+          git push fork dev
