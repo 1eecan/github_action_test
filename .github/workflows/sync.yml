@@ -22,7 +22,7 @@ jobs:
 
       - name: Sync with fork
         run: |
-          git remote add fork https://github.com/1eecan/github_action_test.git
+          git remote add fork https://github.com/1eecan/fork-repo.git
           git fetch fork
           git checkout dev
           git merge origin/dev
